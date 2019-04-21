@@ -135,18 +135,25 @@ var gpio = {
 
 		options = sanitizeOptions(options);
 		
-		fs.writeFile(sysFsPath + "/export" , pinMapping[pinNumber], function(err)
+		if (!fs.existsSync(sysFsPath + "/gpio" + pinMapping[pinNumber]))
 		{
-			if (err) return callback(err);
+			fs.writeFile(sysFsPath + "/export" , pinMapping[pinNumber].toString(), "utf8", function(err)
+			{
+				if (err) return callback(err);
+				gpio.setDirection(pinNumber, options.direction, (callback || noop));
+			});
+		}
+		else
+		{
 			gpio.setDirection(pinNumber, options.direction, (callback || noop));
-		});
+		}
 	},
 
 	setDirection: function(pinNumber, direction, callback) {
 		pinNumber = sanitizePinNumber(pinNumber);
 		direction = sanitizeDirection(direction);
 
-		fs.writeFile(sysFsPath + "/gpio" + pinMapping[pinNumber] + "/direction", direction, (callback || noop));
+		fs.writeFile(sysFsPath + "/gpio" + pinMapping[pinNumber] + "/direction", direction, "utf8", (callback || noop));
 	},
 
 	getDirection: function(pinNumber, callback) {
