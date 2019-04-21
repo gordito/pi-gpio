@@ -63,8 +63,6 @@ function isNumber(number) {
 	return !isNaN(parseInt(number, 10));
 }
 
-function noop() {}
-
 function handleExecResponse(method, pinNumber, callback) {
 	return function(err, stdout, stderr) {
 		if (err) {
@@ -136,8 +134,12 @@ var gpio = {
 		}
 
 		options = sanitizeOptions(options);
-
-		gpio.setDirection(pinNumber, options.direction, callback);
+		
+		fs.writeFile(sysFsPath + "/export" , pinMapping[pinNumber], function(err)
+		{
+			if (err) return callback(err);
+			gpio.setDirection(pinNumber, options.direction, (callback || noop));
+		});
 	},
 
 	setDirection: function(pinNumber, direction, callback) {
