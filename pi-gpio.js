@@ -2,6 +2,8 @@
 var fs = require("fs"),
 	path = require("path"),
 	exec = require("child_process").exec;
+	
+var noop = function () {}; 
 
 var sysFsPathOld = "/sys/devices/virtual/gpio", // pre 3.18.x kernel
 	sysFsPathNew = "/sys/class/gpio", // post 3.18.x kernel
@@ -174,7 +176,7 @@ var gpio = {
 
 		value = !!value ? "1" : "0";
 
-		fs.writeFile(sysFsPath + "/gpio" + pinMapping[pinNumber] + "/value", value, "utf8", callback);
+		fs.writeFile(sysFsPath + "/gpio" + pinMapping[pinNumber] + "/value", value, "utf8", (callback || noop));
 	}
 };
 
